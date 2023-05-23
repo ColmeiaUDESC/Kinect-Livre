@@ -6,13 +6,11 @@
 
 ## :dart: Conceito
 
-> Aqui irá ficar um resumo sobre o projeto e o que ele abrange. Sinta-se livre para descrever tambem a história do projeto, como: o ano em que foi criado, por que foi criado, alguma coisa interessante que aconteceu no desenvolvimento, como foi/sera conduzido, se o projeto tem inicio e fim ou se é algo continuo.
+> Utilização do sensor de movimentos e profundidade [Kinect](https://pt.wikipedia.org/wiki/Kinect) para a implementação e desenvolvimento de projetos para exposição.
 
 ## 💡 Objetivos
 
-> Aqui você deve descrever o que se espera do projeto, se tem algum público alvo à atingir. 
-- Se for melhor, voce pode usar uma lista
-- Com seus objetivos
+> Nosso maior foco é trazer atenção não só a uma tecnologia muito interessante, mas em como o Software Livre ajudou a manter ela viva com drivers, bibliotecas e projetos abertos.
 
 ## 🐝 Colmeia
 ### Grupo de extensão em software e hardware livre
@@ -29,7 +27,11 @@
 </sub>
 
 ## 💭 Como este repositório está organizado
-> Deve ser descrito como o repositório está organizado, exemplo: Nesse repositório temos as aulas divididas por pastas, dentro de cada pasta (de aula) temos um arquivo pdf com os slides e um README sobre a aula.
+> Cada projeto sera divido em pastas com suas explicações mais detalhadas de como estamos implementado-os e arquivos necessários para seu funcionamento.
+
+## Projetos atuais e seus status
+- Caixa de Areia com Realidade Aumentada [100%]
+- Piano em Qualquer Lugar [10%]
 
 ## 🤝 Como contribuir?
 > Viu alguma coisa errada ou quer propor uma melhoria para esse projeto? Pode criar uma issue explicando o seu caso ou então você pode criar um fork desse repositório, arrumar o que precisar no seu fork e criar um pull request explicando o que foi mudado e porque.
