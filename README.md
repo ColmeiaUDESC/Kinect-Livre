@@ -30,7 +30,7 @@
 > Cada projeto sera divido em pastas com suas explicações mais detalhadas de como estamos implementado-os e arquivos necessários para seu funcionamento.
 
 ## Projetos atuais e seus status
-- Caixa de Areia com Realidade Aumentada [100%]
+- [Caixa de Areia com Realidade Aumentada](https://github.com/ColmeiaUDESC/Kinect-Livre/tree/main/Caixa%20de%20Areia%20com%20Realidade%20Aumentada) [100%]
 - Piano em Qualquer Lugar [10%]
 
 ## 🤝 Como contribuir?
