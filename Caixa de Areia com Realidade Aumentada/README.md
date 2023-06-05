@@ -41,8 +41,8 @@ A implementação desse projeto sera dividída em duas etapas, com seus arquivos
 > Vrui normal tem um problema com o compilador então eu feiz uma modificaçao nele.
 
 - Baixe o `Vrui-8.0-002-MOD.tar.gz` de `Caixa de Areia com Realidade Aumentada/1-instalacao/vrui`
-- Mova para o arquivo para mas não extraia `~/`
-- Baixe o `Build-Ubuntu-MOD.sh` de `Caixa de Areia com Realidade Aumentada/1-instalacao/scrip`
+- Mova para `~/` mas não extraia 
+- Baixe o `Build-Ubuntu-MOD.sh` de `Caixa de Areia com Realidade Aumentada/1-instalacao/scrip` para a `~/`
 - Execute o script: 
 ```bash
 bash Build-Ubuntu-MOD.sh`
@@ -54,7 +54,7 @@ cd ~
 rm Build-Ubuntu-MOD.sh`
 ```
 
-#### 1.4 - Kinect Drivers
+#### 1.4 - Drivers do Kinect
 ```bash
 cd ~/src
 wget http://web.cs.ucdavis.edu/~okreylos/ResDev/Kinect/Kinect-3.10.tar.gz
