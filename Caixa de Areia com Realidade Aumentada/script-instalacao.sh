@@ -1,3 +1,8 @@
+if [ "$EUID" -ne 0 ]
+  then echo "Por favor, execute como root (sudo script-instalacao.sh)"
+  exit
+fi
+
 git clone https://github.com/ColmeiaUDESC/Kinect-Livre.git
 
 cd Kinect-Livre/Caixa\ de\ Areia\ com\ Realidade\ Aumentada/1-instalacao/biblioteca
