@@ -10,7 +10,7 @@ cd Kinect-Livre/Caixa\ de\ Areia\ com\ Realidade\ Aumentada/1-instalacao/bibliot
 sudo dpkg -i libdc1394-22-dev_2.2.5-1_amd64.deb
 sudo dpkg -i libdc1394-22_2.2.5-1_amd64.deb
 
-cd ../script
+cd ..
 bash Build-Ubuntu-MOD.sh
 
 cd ~/src
