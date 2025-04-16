@@ -30,7 +30,7 @@ cd ~/src/SARndbox-2.8\n
 ./bin/SARndbox -uhm -fpv" >> RunSARndbox.sh
 
 chmod a+x $USER_HOME/src/SARndbox-2.8/RunSARndbox.sh
-cd ~/Desktop/
+cd $USER_HOME/Desktop/
 touch Caixa\ de\ Areia.desktop
 printf "
 [Desktop Entry]
