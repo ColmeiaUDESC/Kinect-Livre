@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get prerequisite packages:
-PREREQUISITE_PACKAGES="build-essential g++ libudev-dev libdbus-1-dev libusb-1.0-0-dev zlib1g-dev libssl-dev libpng-dev libjpeg-dev libtiff-dev libasound2-dev libspeex-dev libopenal-dev libv4l-dev libdc1394-22-dev libtheora-dev libbluetooth-dev libfreetype6-dev libxi-dev libxrandr-dev mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev"
+PREREQUISITE_PACKAGES="build-essential g++ libudev-dev libdbus-1-dev libusb-1.0-0-dev zlib1g-dev libssl-dev libpng-dev libjpeg-dev libtiff-dev libasound2-dev libspeex-dev libopenal-dev libv4l-dev libtheora-dev libbluetooth-dev libfreetype6-dev libxi-dev libxrandr-dev mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev"
 echo "Please enter your password to install Vrui's prerequisite packages"
 sudo apt-get install $PREREQUISITE_PACKAGES
 INSTALL_RESULT=$?
