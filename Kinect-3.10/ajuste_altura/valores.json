@@ -1,0 +1,36 @@
+{
+  "fundo": -18.5,
+  "topo": 24.0,
+  "nivel": -13.5,
+  "rotacao": 90.0,
+  "relevo": true,
+  "curvas": true,
+  "tamanho": 115.0,
+  "recorte": {
+    "esquerda": 0.0,
+    "direita": 0.0,
+    "cima": 0.0,
+    "baixo": 0.0
+  },
+  "desempenho": "Resposta r\u00e1pida",
+  "camera": true,
+  "camera_modo": "Profundidade (relevo)",
+  "area_scan": [
+    [
+      0.8515625,
+      0.1125
+    ],
+    [
+      0.884375,
+      0.9541666666666667
+    ],
+    [
+      0.25625,
+      0.9375
+    ],
+    [
+      0.25,
+      0.11875
+    ]
+  ]
+}

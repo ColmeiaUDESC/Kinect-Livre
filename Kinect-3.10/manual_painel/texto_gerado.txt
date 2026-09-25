@@ -1,0 +1,457 @@
+ COLMEIA / REALIDADE AUMENTADA
+
+
+
+
+ Caixa de Areia
+ Manual do painel Python
+ Do enquadramento do Kinect à projeção: um guia ilustrado para operar pelos botões, abas e controles do
+ painel.
+
+
+
+
+ Interface real do painel. A prévia fica no computador; o relevo é enviado ao projetor.
+
+ Gustavo Lass
+ Bolsista do Colmeia
+ Desenvolvimento do painel Python e das adaptações de integração; atualização deste manual.
+ Edição atualizada • 25 de setembro de 2026
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                         1
+CAIXA DE AREIA / USO PELA INTERFACE                                                         Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 01
+
+
+ Ligar e começar
+ Este guia considera o computador do projeto com o painel instalado. Para o uso diário, não é necessário
+ digitar argumentos do SARndbox.
+
+ 01 Prepare a montagem
+ Ligue a alimentação do Kinect, conecte seu USB ao computador e conecte o projetor. Deixe os dois firmes,
+ apontados para a caixa, com os quatro cantos visíveis ao sensor.
+
+ 02 Configure a segunda tela
+ Nas configurações de telas do Linux, use estender/unir as telas. Mantenha o computador como tela
+ principal e o projetor como segunda tela. Evite espelhamento, pois ele também exibiria o painel na areia.
+
+ 03 Abra o painel
+ Abra Atividades ou o menu de aplicativos, pesquise Painel da Caixa de Areia e clique no resultado.
+ Também há um atalho com esse nome na área de trabalho; se solicitado pelo Linux, use Permitir iniciar.
+
+ 04 Inicie a projeção
+ No rodapé do painel, clique em Aplicar e abrir a projeção. Aguarde a imagem do Kinect e do relevo. Os
+ últimos ajustes aplicados são carregados ao abrir o painel.
+
+    Use o atalho do painel
+    O atalho antigo Caixa de Areia abre diretamente o programa anterior. Para seguir este manual,
+    escolha Painel da Caixa de Areia. Feche outra instância do SARndbox, RawKinectViewer ou
+    CalibrateProjector antes de iniciar a câmera.
+
+
+
+ Onde encontrar cada ajuste
+
+   Quero…                                                                                           Página
+
+
+   Conhecer as abas e os botões                                                                     3
+
+
+   Ver a profundidade e marcar a área da caixa                                                      4–5
+
+
+   Regular fundo, nível azul/verde e topo                                                           6
+
+
+   Girar, enquadrar e conferir a projeção                                                           7–8
+
+
+   Melhorar a resposta e resolver problemas                                                         9–10
+
+
+   Entender a calibração, salvar e encerrar                                                         11
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                               2
+CAIXA DE AREIA / USO PELA INTERFACE                                                                                  Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 02
+
+
+ Conheça o painel
+
+
+
+
+ Figura 1. Aba Ajustes e rodapé fixo. Os valores da captura pertencem a esta montagem; não são valores universais.
+
+
+   Parte da interface                    Para que serve
+
+
+   Ajustes                               Alturas, desempenho, aparência, giro, tamanho e recortes.
+
+
+   Prévia do projetor                    Cópia reduzida da imagem que está sendo enviada ao projetor.
+
+
+   Câmera do Kinect                      Profundidade usada no relevo e marcação da área; câmera colorida opcional.
+
+
+ Aplicar e abrir a projeção salva e usa as alterações. Aplicar reinicia a projeção e zera a água simulada. O
+ FPS e as mensagens ficam no rodapé do painel, fora da imagem projetada.
+ Em 800 × 600, use a barra de rolagem da aba Ajustes para chegar aos controles inferiores. Os botões do rodapé permanecem
+ acessíveis.
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                                                        3
+CAIXA DE AREIA / USO PELA INTERFACE                                                        Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 03
+
+
+ Veja o sensor que mede a areia
+ Abra Câmera do Kinect, mantenha Ativar prévia marcado, selecione Profundidade (relevo) e clique em
+ Aplicar.
+
+
+
+
+ Figura 2. Profundidade bruta do Kinect, antes do filtro e dos limites de altura.
+
+ Claro: pontos mais próximos do Kinect. Escuro: pontos mais distantes. Preto: ausência de leitura. O
+ contraste é automático: os tons não são uma régua em centímetros.
+
+ Confira os quatro cantos internos da caixa. É normal o sensor enxergar também o chão ou o suporte. Na
+ próxima etapa, você define qual parte será usada no relevo.
+
+     Profundidade e Colorida são diferentes
+     Profundidade (relevo) é a imagem usada para marcar a área e medir as alturas. Colorida é uma
+     fotografia da caixa e tem outro enquadramento. Para trocar o modo, selecione a opção e clique em
+     Aplicar.
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                              4
+CAIXA DE AREIA / USO PELA INTERFACE                                                                                 Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 04
+
+
+ Desenhe a área útil da caixa
+
+
+
+
+ Figura 3. Exemplo de marcação por dentro das paredes. Os pontos verdes pertencem ao painel e não são projetados na areia.
+
+ 01 Clique em Marcar 4 cantos
+ Na imagem de Profundidade (relevo), clique nesta ordem: 1 superior esquerdo → 2 superior direito → 3
+ inferior direito → 4 inferior esquerdo.
+
+ 02 Ajuste o contorno
+ Arraste os pontos verdes até as bordas internas da areia. Deixe a faixa da parede fora da seleção. As linhas
+ devem contornar a caixa sem se cruzar.
+
+ 03 Clique em Aplicar
+ As alturas fora da área são ignoradas pela malha. A seleção fica salva. Sem matriz de calibração, a visão do
+ relevo passa a enquadrar a área escolhida.
+ A prévia de profundidade continua mostrando o sensor inteiro para permitir corrigir os cantos. Para retirar a seleção, clique
+ em Usar toda a captura e depois em Aplicar.
+ Aplicar uma área selecionada zera os recortes antigos de borda. A marcação usa o plano de referência já existente; não mede
+ novamente o fundo da caixa.
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                                                       5
+CAIXA DE AREIA / USO PELA INTERFACE                                                                         Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 05
+
+
+ Regule as alturas e as cores
+ Na aba Ajustes, mova a barra ou digite o valor no campo à direita. Os valores são centímetros em relação
+ ao plano de referência já medido.
+
+
+
+
+ Figura 4. Fundo, nível azul/verde e topo: ajuste um controle de cada vez.
+
+
+   Controle                          O que muda
+
+
+   Fundo                             Menor altura aceita e início do azul escuro. Para aceitar depressões mais baixas, diminua o
+                                     valor.
+
+
+   Nível azul/verde                  Desloca a transição das cores. Aumentar faz o azul alcançar alturas maiores; diminuir faz o
+                                     azul recuar.
+
+
+   Topo                              Maior altura aceita e extremidade branca da paleta. Aumente para aceitar montes mais
+                                     altos.
+
+
+ Experimente de 1 em 1 cm: altere um valor, clique em Aplicar, faça um pequeno monte e um vale e
+ observe o resultado. Mantenha sempre Fundo < Nível azul/verde < Topo.
+ Fundo e topo também excluem leituras fora da faixa. O nível azul/verde muda a paleta; não altera o plano medido nem
+ adiciona água à simulação.
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                                               6
+CAIXA DE AREIA / USO PELA INTERFACE                                                        Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 06
+
+
+ Gire e enquadre a imagem
+
+
+
+
+ Figura 5. Role a aba Ajustes para encontrar giro, enquadramento e recortes.
+
+ Girar imagem no sentido horário. Use 0°, 90°, 180°, 270° ou a barra para outro ângulo. 360° volta à
+ orientação inicial. Depois clique em Aplicar.
+
+ Tamanho da imagem (%). Na visão manual, diminua para enxergar mais da caixa e aumente para aproximar.
+ Comece perto de 100%; valores maiores podem cortar bordas. O botão Afastar e remover recortes coloca
+ 75% e limpa as máscaras de borda, aguardando Aplicar.
+
+ Recortar paredes. Esquerda, Direita, Cima e Baixo escondem faixas da imagem projetada. Esse recorte
+ visual não define a área medida pelo Kinect. Para limitar a medição, use os quatro cantos da página 5.
+
+    Se a caixa for quadrada
+    Uma área quadrada pode aparecer com faixas pretas numa tela retangular. Isso preserva as
+    proporções. Marque a área interna e reduza o tamanho se algum lado ficar cortado. Girar e aumentar
+    a imagem não substituem o alinhamento por calibração.
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                              7
+CAIXA DE AREIA / USO PELA INTERFACE                                                                        Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 07
+
+
+ Confira o que será projetado
+
+
+
+
+ Figura 6. Prévia da saída do projetor: relevo, curvas e cores. Controles e FPS ficam somente no painel.
+
+ 01 Confira a segunda tela
+ Com uma única tela externa ativa, o painel tenta abrir a projeção nela em tela cheia. Se abrir na tela errada,
+ mova a janela do SARndbox para o projetor e pressione F11.
+
+ 02 Compare sensor e saída
+ A aba Câmera do Kinect mostra a área capturada. A aba Prévia do projetor mostra o relevo desenhado
+ após os ajustes. Elas têm enquadramentos diferentes.
+
+ 03 Verifique o encaixe sobre a areia
+ Faça um monte e observe se as cores acompanham sua posição física. Se houver deslocamento mesmo
+ com a área e o giro corretos, confira a calibração com o responsável técnico.
+ As miniaturas atualizam até 5 imagens/s. O contador do rodapé mede a projeção, que pode estar a aproximadamente 30 FPS
+ mesmo quando a prévia parece menos fluida.
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                                              8
+CAIXA DE AREIA / USO PELA INTERFACE                                                          Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 08
+
+
+ Aparência e resposta ao movimento
+ Na aba Ajustes, escolha um perfil em Desempenho e clique em Aplicar. Comece por Resposta rápida.
+
+   Perfil                      Quando usar                         Efeito
+
+
+   Resposta rápida             Uso normal e areia mudando de       Filtro mais curto; mantém os detalhes da
+                               forma.                              água.
+
+
+   Mais leve                   A projeção está com FPS baixo.      Reduz a grade e o trabalho da simulação de
+                                                                   água.
+
+
+   Mais suave                  A superfície ou as curvas ficam     Suaviza mais; pode acrescentar atraso na
+                               tremendo.                           resposta.
+
+
+   Perfil do manual            Comparar com o comportamento        Filtro mais longo, que demora mais a
+                               anterior.                           acompanhar mudanças.
+
+
+
+ Se parece estar “lagando”
+ 01 Olhe o FPS do rodapé
+ FPS baixo sugere dificuldade para desenhar ou simular. Experimente Mais leve e feche outros aplicativos
+ pesados.
+
+ 02 Observe o atraso da areia
+ Se o FPS está normal, mas o relevo demora a mudar, prefira Resposta rápida. Um filtro mais suave pode
+ parecer lento mesmo com boa taxa de desenho.
+
+ 03 Confira a captura
+ Na profundidade, verifique se a areia aparece com leitura contínua. Pontos pretos indicam falta de dados.
+ Confira posição do sensor, alimentação e cabos se a imagem desaparecer.
+
+ Aparência do modo normal
+ Mantenha Sombreamento do relevo para destacar as formas e Curvas de nível para mostrar as linhas
+ topográficas. Ligue ou desligue essas opções e clique em Aplicar para comparar.
+
+    Não confunda prévia com desempenho
+    A miniatura tem atualização reduzida para aliviar a carga. No teste desta montagem, o painel
+    registrou valores próximos de 30 FPS; isso não garante a mesma taxa em outra cena ou computador.
+    A água reinicia sempre que você aplica ajustes.
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                                9
+CAIXA DE AREIA / USO PELA INTERFACE                                                                        Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 09
+
+
+ Quando algo não funciona
+   O que aconteceu                       O que fazer pela interface ou na montagem
+
+
+   A câmera não aparece.                 Confira alimentação e USB do Kinect. Feche outros programas que usem o
+                                         sensor e clique em Aplicar novamente. Leia a mensagem no rodapé.
+
+
+   A câmera aparece colorida.            Escolha Profundidade (relevo) e clique em Aplicar para ver as medições e marcar
+                                         a área.
+
+
+   Marcar 4 cantos não inicia.           Ative a prévia e aplique o modo Profundidade. Aguarde uma imagem recente.
+                                         Clique dentro da imagem, não nas margens pretas.
+
+
+   Aparecem paredes no relevo.           Refaça ou arraste os quatro pontos para dentro das paredes e aplique. O sensor
+                                         pode continuar mostrando o exterior; o contorno define a parte usada.
+
+
+   Corta em cima ou embaixo.             Confira se os cantos estão visíveis no sensor. Se estiverem, marque a área e
+                                         reduza Tamanho da imagem. Se não estiverem, reposicione o Kinect e revise a
+                                         calibração.
+
+
+   A caixa fica pequena ou há            A área quadrada mantém sua proporção na tela retangular. Ajuste Tamanho aos
+   faixas pretas.                        poucos. Aumentar demais pode cortar bordas.
+
+
+   Azul demais ou de menos.              Ajuste Nível azul/verde: diminua para o azul recuar; aumente para subir.
+                                         Mantenha esse valor entre Fundo e Topo.
+
+
+   Os botões sumiram em 800 ×            Use a barra de rolagem na aba Ajustes. Os botões Aplicar e Restaurar ficam fixos
+   600.                                  no rodapé; maximize o painel se necessário.
+
+
+   O painel ou o FPS aparecem na         Confira se o Linux está em telas estendidas. Deixe o painel no computador e
+   areia.                                apenas a janela do SARndbox no projetor.
+
+
+   A projeção não acompanha os           Reveja a calibração física do projetor. A seleção da área limita a leitura, mas não
+   montes na posição certa.              corrige sozinha o alinhamento entre Kinect, areia e projetor.
+
+
+ Se a projeção encerrar com erro, use a mensagem do rodapé para identificar a causa. O registro técnico fica na pasta
+ ajuste_altura, no arquivo sarndbox.log.
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                                              10
+CAIXA DE AREIA / USO PELA INTERFACE                                                                         Gustavo Lass · Colmeia
+
+
+
+ GUIA DE USO / 10
+
+
+ Salvar, encerrar e manter a montagem
+ 01 Salve os ajustes que funcionaram
+ Clique em Aplicar. O painel salva alturas, aparência, giro, tamanho, perfil de desempenho, modo da câmera
+ e seleção da área. Alterar um controle sem aplicar não salva essa alteração.
+
+ 02 Encerre pelo painel
+ Feche a janela do painel para encerrar a projeção iniciada por ele. Na próxima abertura, os últimos ajustes
+ aplicados serão carregados; clique em Aplicar para iniciar novamente.
+
+ 03 Restaure só quando necessário
+ Restaurar valores iniciais redefine os controles no painel, inclusive a seleção de área. A mudança só passa a
+ valer ao clicar em Aplicar. Não é um botão para voltar ao ajuste anterior.
+
+    O que ainda depende da calibração
+    O painel usa o plano de referência da caixa já medido. Marcar os cantos atualiza a área útil sobre
+    esse plano. A calibração do projetor é outra etapa, necessária para fazer a imagem coincidir
+    fisicamente com a areia. Se Kinect, projetor ou caixa forem movidos, revise a calibração. Se o rodapé
+    mostrar “PRÉVIA… falta calibrar”, o sistema está usando orientação manual.
+
+
+
+ Para quem cuida da instalação
+ Os ajustes locais ficam em ajuste_altura/valores.json e a seleção em ajuste_altura/area_scan.txt, dentro da pasta Kinect-3.10.
+ Preserve também os arquivos de calibração originais. A instalação e a calibração inicial ficam sob responsabilidade técnica; os
+ detalhes estão em GUIA_CALIBRACAO_PROJETOR.md e AJUSTAR_ALTURA.md.
+
+ Autoria e créditos
+ Gustavo Lass — bolsista do Colmeia.
+ Desenvolvimento do painel Python e das adaptações de integração para ajustes, prévias, seleção da área
+ do Kinect e controle da projeção. Atualização do manual de uso pela interface.
+ Base tecnológica: SARndbox 2.8, Kinect 3.10 e Vrui 8.0, de Oliver Kreylos / KeckCAVES, UC Davis. Os créditos dos projetos
+ originais são preservados; a autoria acima se refere ao painel e à adaptação local.
+
+ Esta edição atualiza o manual “Caixa de Areia — Colmeia”, de 22 de abril de 2024, fornecido em Manual Caixa de Areia.pdf. O
+ foco passa da operação por comandos para o uso do painel instalado. Capturas reais da interface; os valores e o contorno
+ ilustrados devem ser ajustados para cada montagem.
+
+ Versão do manual: 25/09/2026 • Uso pelo painel Python • Colmeia
+
+
+
+
+COLMEIA • MANUAL DO PAINEL PYTHON                                                                                              11
+
