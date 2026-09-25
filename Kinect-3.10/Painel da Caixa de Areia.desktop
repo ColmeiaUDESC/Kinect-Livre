@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Painel da Caixa de Areia
+Comment=Ajustar alturas, área do Kinect e projeção pelo painel
+Exec=/usr/bin/python3 /home/colmeia/src/Kinect-3.10/regular_altura.py
+Path=/home/colmeia/src/Kinect-3.10
+Icon=/home/colmeia/src/colmeia.jpg
+Terminal=false
+Categories=Education;Science;

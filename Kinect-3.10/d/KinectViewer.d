@@ -1,0 +1,20 @@
+$(OBJDIR)/KinectViewer.o $(OBJDIR)/pic/KinectViewer.o: KinectViewer.cpp \
+ KinectViewer.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/Config.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/FrameSource.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/LensDistortion.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/ProjectorType.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/Internal/Config.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/FrameBuffer.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/Camera.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/DirectFrameSource.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/CameraV2.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/OpenDirectFrameSource.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/FileFrameSource.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/MultiplexedFrameSource.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/ProjectorHeader.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/Projector2.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/MeshBuffer.h \
+ /home/colmeia/src/Kinect-3.10/Kinect/FrameSaver.h \
+ SphereExtractorTool.h \
+ SphereExtractor.h /usr/local/include/Vrui-8.0/Geometry/Sphere.h
