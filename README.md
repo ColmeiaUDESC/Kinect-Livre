@@ -4,9 +4,13 @@
 
 # Kinect Livre — Caixa de Areia com Realidade Aumentada
 
-![Resultado final da caixa](Kinect-3.10/manual_painel/imagens/caixamontada.png)
+<p align="center">
+  <img src="Kinect-3.10/manual_painel/imagens/caixamontada.png"
+       alt="Resultado final da caixa"
+       width="300">
+</p>
 
-Projeto do **Colmeia — grupo de extensão em software e hardware livre da UDESC**. Utiliza o Kinect para medir a superfície da areia e o SARndbox para projetar cores, curvas de nível e água simulada sobre o relevo.
+Projeto do **Colmeia - grupo de extensão em software e hardware livre da UDESC**. Utiliza o Kinect para medir a superfície da areia e o SARndbox para projetar cores, curvas de nível e água simulada sobre o relevo.
 
 Esta versão reúne o código do **Kinect 3.10**, adaptações do **SARndbox 2.8** e um **painel de configuração em Python/Tkinter**. O painel permite ajustar a caixa pela interface, sem digitar argumentos do SARndbox a cada utilização.
 
