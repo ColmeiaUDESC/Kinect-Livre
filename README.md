@@ -2,9 +2,11 @@
   <img src="https://avatars.githubusercontent.com/u/54866625?s=400" alt="Colmeia" width="160" height="160">
 </p>
 
-# Kinect Livre - Caixa de Areia com Realidade Aumentada
+# Kinect Livre — Caixa de Areia com Realidade Aumentada
 
-Projeto do **Colmeia - grupo de extensão em software e hardware livre da UDESC**. Utiliza o Kinect para medir a superfície da areia e o SARndbox para projetar cores, curvas de nível e água simulada sobre o relevo.
+![Resultado final da caixa](Kinect-3.10/manual_painel/imagens/caixamontada.png)
+
+Projeto do **Colmeia — grupo de extensão em software e hardware livre da UDESC**. Utiliza o Kinect para medir a superfície da areia e o SARndbox para projetar cores, curvas de nível e água simulada sobre o relevo.
 
 Esta versão reúne o código do **Kinect 3.10**, adaptações do **SARndbox 2.8** e um **painel de configuração em Python/Tkinter**. O painel permite ajustar a caixa pela interface, sem digitar argumentos do SARndbox a cada utilização.
 
@@ -199,7 +201,7 @@ Os testes verificam seleção de área, transformações e comportamento da inte
 
 ## Autoria e licenças
 
-**Gustavo Lass - bolsista do Colmeia:** desenvolvimento do painel Python, adaptações locais de integração e atualização do manual de uso.
+**Gustavo Lass — bolsista do Colmeia:** desenvolvimento do painel Python, adaptações locais de integração e atualização do manual de uso.
 
 A base tecnológica utiliza Kinect, Vrui e SARndbox, de **Oliver Kreylos / KeckCAVES, UC Davis**, preservando os créditos dos projetos originais. Consulte os arquivos [COPYING do Kinect](Kinect-3.10/Kinect-3.10/COPYING) e [COPYING do SARndbox adaptado](Kinect-3.10/ajuste_altura/native/COPYING), além dos avisos nos fontes, para as condições de licença aplicáveis.
 
