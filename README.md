@@ -63,7 +63,23 @@ Execute um comando por vez e prossiga somente se ele terminar sem erro. Reconect
 
 ### 2. Disponibilize os recursos do SARndbox no caminho esperado
 
-O painel define `SANDBOX = ROOT.parent / "SARndbox-2.8"`. Como `ROOT` é a pasta que contém `regular_altura.py`, ao executar a partir do clone ele espera esta estrutura:
+O painel procura a instalação do SARndbox (uma pasta `SARndbox-2.8` que contenha `etc/SARndbox-2.8`) nesta ordem e usa a primeira que encontrar:
+
+1. a pasta indicada na variável de ambiente `SARNDBOX_DIR`;
+2. `SARndbox-2.8` ao lado de `Kinect-3.10` (a estrutura da montagem original, mostrada abaixo);
+3. `Kinect-3.10/SARndbox-2.8`;
+4. `SARndbox-2.8` duas pastas acima de `Kinect-3.10`;
+5. `~/src/SARndbox-2.8` e `~/SARndbox-2.8`.
+
+Se o SARndbox estiver em outro lugar, basta indicar a pasta:
+
+```bash
+SARNDBOX_DIR=/opt/SARndbox-2.8 python3 Kinect-3.10/regular_altura.py
+```
+
+Da mesma forma, `SARNDBOX_BIN` pode apontar para outro executável do SARndbox; sem ela, o painel usa `Kinect-3.10/ajuste_altura/native/bin/SARndbox`. Se nada for encontrado, o painel mostra onde procurou ao clicar em **Aplicar**.
+
+A estrutura da montagem original, encontrada sem nenhuma configuração, é:
 
 ```text
 Kinect-Livre/
@@ -78,23 +94,23 @@ Kinect-Livre/
     └── share/SARndbox-2.8/Shaders/
 ```
 
-Coloque a instalação completa do SARndbox nessa posição ou crie um link para uma instalação existente. Por exemplo, **na raiz do clone**, se o SARndbox já estiver em `~/src/SARndbox-2.8` e ainda não existir uma entrada `SARndbox-2.8` na raiz:
+Em vez de usar `SARNDBOX_DIR`, também é possível criar um link para uma instalação existente **na raiz do clone** (esse link é ignorado pelo git):
 
 ```bash
-ln -s "$HOME/src/SARndbox-2.8" SARndbox-2.8
+ln -s /caminho/para/SARndbox-2.8 SARndbox-2.8
 ```
 
-Esse link na **raiz do clone** atende ao caminho usado pelo painel. O link que já existe **dentro de `Kinect-3.10`** não substitui essa configuração.
+O link versionado **dentro de `Kinect-3.10`** aponta para `/home/colmeia/src/SARndbox-2.8` e só funciona na máquina original.
 
 A pasta de configuração precisa conter os recursos do SARndbox, incluindo `HeightColorMap.cpt` e `BoxLayout.txt`. O plano de referência e a calibração devem corresponder à montagem física utilizada; arquivos de exemplo não são uma calibração da sua caixa.
 
 ### 3. Recompile a versão adaptada
 
-A partir da raiz do repositório, com as dependências instaladas e o caminho acima preparado:
+A partir da raiz do repositório, com as dependências instaladas e o caminho acima preparado (troque `../SARndbox-2.8` pela pasta da sua instalação, se for outra):
 
 ```bash
 cd Kinect-3.10
-SAR_DIR="$(cd ../SARndbox-2.8 && pwd -P)"
+SAR_DIR="$(cd "${SARNDBOX_DIR:-../SARndbox-2.8}" && pwd -P)"
 env -u DEBUG make -C ajuste_altura/native clean
 env -u DEBUG make -C ajuste_altura/native -j2 \
   INSTALLDIR="$SAR_DIR" bin/SARndbox
@@ -119,7 +135,21 @@ python3 Kinect-3.10/regular_altura.py --camera
 
 Use apenas um desses comandos por vez. `--abrir` seleciona a prévia do projetor; `--camera` seleciona a aba do Kinect e utiliza o modo de câmera salvo.
 
-O arquivo `Painel da Caixa de Areia.desktop` contém caminhos da máquina original. Antes de usá-lo em outra instalação, ajuste os campos `Exec`, `Path` e `Icon` para os caminhos locais.
+Para criar o atalho no menu de aplicativos e na área de trabalho com os caminhos da sua cópia:
+
+```bash
+./Kinect-3.10/instalar_atalho.sh
+# ou, com o SARndbox em outro lugar:
+SARNDBOX_DIR=/opt/SARndbox-2.8 ./Kinect-3.10/instalar_atalho.sh
+```
+
+O script não substitui um atalho que já exista na área de trabalho. O arquivo `Painel da Caixa de Areia.desktop` versionado continua com os caminhos da máquina original.
+
+### Kinect desconectado ou ocupado
+
+- Sem o Kinect, o painel mostra um aviso em vermelho. Ao clicar em **Aplicar**, ele espera e abre a projeção sozinho quando o Kinect é detectado. Se o Kinect for desconectado durante a projeção, ela é reaberta quando ele voltar. **Cancelar espera** desiste da abertura automática.
+- Se RawKinectViewer, CalibrateProjector ou outro SARndbox estiver usando o Kinect, o painel pergunta se deve fechá-lo antes de abrir a projeção.
+- Se a projeção travar ao ser fechada (por exemplo, com o USB desconectado), o painel a encerra à força após 5 segundos.
 
 ## Uso pela interface
 

@@ -3,8 +3,10 @@
 
 import json
 import math
+import os
 from pathlib import Path
 import re
+import signal
 import subprocess
 import time
 import tkinter as tk
@@ -13,10 +15,46 @@ import projecao_visual as visual_tools
 from area_scan import SensorCanvas, validate_area
 
 ROOT = Path(__file__).resolve().parent
-SANDBOX = ROOT.parent / "SARndbox-2.8"
+
+
+def find_sandbox(environ=os.environ, root=ROOT, home=None):
+    """Localiza a instalação do SARndbox 2.8.
+
+    SARNDBOX_DIR tem prioridade. Sem ela, o primeiro local testado é o da
+    montagem original (pasta vizinha a Kinect-3.10), depois outros comuns.
+    """
+    configured = environ.get("SARNDBOX_DIR")
+    if configured:
+        return Path(configured).expanduser()
+    home = Path.home() if home is None else home
+    candidates = [root.parent / "SARndbox-2.8", root / "SARndbox-2.8",
+                  root.parent.parent / "SARndbox-2.8", home / "src" / "SARndbox-2.8",
+                  home / "SARndbox-2.8"]
+    for candidate in candidates:
+        if (candidate / "etc" / "SARndbox-2.8").is_dir():
+            return candidate
+    return candidates[0]
+
+
+SANDBOX = find_sandbox()
 CONFIG = SANDBOX / "etc" / "SARndbox-2.8"
 STATE = ROOT / "ajuste_altura"
 DEFAULTS = {"fundo": -40.0, "topo": 25.0, "nivel": 0.0}
+PROC = Path("/proc")
+# Programas que abrem o Kinect e impedem o SARndbox de usá-lo ao mesmo tempo.
+KINECT_PROGRAMS = ("RawKinectViewer", "KinectViewer", "KinectUtil", "KinectServer",
+                   "CalibrateProjector", "SARndbox")
+STOP_TIMEOUT = 5.0
+USB_DEVICES = Path("/sys/bus/usb/devices")
+KINECT_VENDOR = "045e"
+# Mesmos IDs de share/69-Kinect.rules: câmeras (Xbox 360, Windows, v2) e motores.
+KINECT_CAMERAS = {"02ae", "02bf", "02c4"}
+KINECT_MOTORS = {"02b0", "02c2"}
+KINECT_MESSAGES = {
+    "sem_energia": "Kinect ligado ao USB, mas a câmera não respondeu. Confira a fonte de alimentação do Kinect.",
+    "ausente": "Kinect não detectado. Confira o cabo USB e a fonte de alimentação.",
+}
+WAITING_KINECT = "Aguardando o Kinect… a projeção abre sozinha quando ele for detectado."
 
 
 def validate(values):
@@ -65,14 +103,59 @@ def external_output():
     return outputs[0] if len(outputs) == 1 else None
 
 
+def kinect_status(devices=None):
+    """Retorna "ok", "sem_energia" ou "ausente"; None se não houver como verificar."""
+    devices = USB_DEVICES if devices is None else devices
+    products = set()
+    try:
+        for device in devices.iterdir():
+            try:
+                if (device / "idVendor").read_text().strip() == KINECT_VENDOR:
+                    products.add((device / "idProduct").read_text().strip())
+            except OSError:
+                continue
+    except OSError:
+        return None
+    if products & KINECT_CAMERAS:
+        return "ok"
+    # Sem a fonte externa, o Kinect de Xbox 360 aparece apenas como motor.
+    return "sem_energia" if products & KINECT_MOTORS else "ausente"
+
+
+def kinect_users(ignore=(), proc=None):
+    """Retorna {pid: programa} de outros programas que estejam usando o Kinect."""
+    proc = PROC if proc is None else proc
+    found = {}
+    try:
+        entries = list(proc.iterdir())
+    except OSError:
+        return found
+    for entry in entries:
+        if not entry.name.isdigit() or int(entry.name) in ignore:
+            continue
+        try:
+            name = (entry / "comm").read_text().strip()
+        except OSError:
+            continue
+        # O Linux corta o nome do processo em 15 caracteres.
+        program = next((p for p in KINECT_PROGRAMS if name == p[:15]), None)
+        if program:
+            found[int(entry.name)] = program
+    return found
+
+
 def atomic_write(path, content):
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(content, encoding="utf-8")
     temporary.replace(path)
 
 
+def kinect_missing(log_text):
+    return "3D cameras connected to local host" in log_text or "Kinect camera devices detected" in log_text
+
+
 def explain_failure(log_text):
-    if "3D cameras connected to local host" in log_text or "Kinect camera devices detected" in log_text:
+    if kinect_missing(log_text):
         return ("A câmera do Kinect não foi detectada. Confira a fonte de alimentação "
                 "e reconecte o cabo USB. Depois clique em Aplicar novamente.")
     if "LIBUSB_ERROR_BUSY" in log_text or "Resource busy" in log_text:
@@ -91,6 +174,9 @@ class Panel:
         self.log = None
         self.mode = ""
         self.applying = False
+        self.kinect = kinect_status()
+        self.waiting_kinect = False
+        self.start_scheduled = False
         self.preview_file = STATE / "preview.ppm"
         self.preview_stamp = None
         self.preview_image = None
@@ -275,6 +361,7 @@ class Panel:
         buttons.pack(fill="x", pady=(0, 4))
         self.apply_button = ttk.Button(buttons, text="Aplicar e abrir a projeção", command=self.apply)
         self.apply_button.pack(side="left")
+        self.cancel_button = ttk.Button(buttons, text="Cancelar espera", command=self.cancel_wait)
         ttk.Button(buttons, text="Restaurar valores iniciais", command=self.restore).pack(side="right")
         self.fps_status = tk.StringVar(value="Projeção: aguardando início")
         ttk.Label(self.footer, textvariable=self.fps_status).pack(anchor="w", pady=(4, 0))
@@ -288,7 +375,14 @@ class Panel:
         self.status = tk.StringVar(value=initial_status)
         self.status_label = ttk.Label(self.footer, textvariable=self.status, wraplength=600)
         self.status_label.pack(anchor="w", fill="x", pady=(4, 0))
-        self.footer.bind("<Configure>", lambda event: self.status_label.configure(wraplength=max(200, event.width - 24)))
+        self.kinect_warning = tk.Label(self.footer, fg="#b00000", font=("Sans", 10, "bold"),
+                                       justify="left", anchor="w", wraplength=600)
+        self.show_kinect_warning()
+
+        def footer_resized(event):
+            for label in (self.status_label, self.kinect_warning):
+                label.configure(wraplength=max(200, event.width - 24))
+        self.footer.bind("<Configure>", footer_resized)
         ttk.Label(frame, text="Aplicar reinicia a projeção e zera a água simulada.\n"
                   "Fundo/topo também cortam leituras fora da faixa.\n"
                   "Girar ajusta a orientação; o encaixe exato exige calibração.",
@@ -306,6 +400,63 @@ class Panel:
         window.protocol("WM_DELETE_WINDOW", self.close)
         window.after(500, self.watch)
         window.after(200, self.poll_preview)
+        window.after(1000, self.watch_kinect)
+
+    def show_kinect_warning(self):
+        message = KINECT_MESSAGES.get(self.kinect)
+        if message:
+            self.kinect_warning.configure(text="⚠ " + message)
+            self.kinect_warning.pack(anchor="w", fill="x", pady=(4, 0), before=self.status_label)
+        else:
+            self.kinect_warning.pack_forget()
+
+    def set_waiting(self, waiting):
+        self.waiting_kinect = waiting
+        if waiting:
+            self.cancel_button.pack(side="left", padx=6)
+        else:
+            self.cancel_button.pack_forget()
+
+    def cancel_wait(self):
+        self.set_waiting(False)
+        self.status.set("Espera cancelada. Clique em Aplicar quando quiser abrir a projeção.")
+
+    def own_pids(self):
+        return {self.process.pid} if self.process is not None else set()
+
+    def stop_process(self):
+        """Pede para o SARndbox fechar e força o encerramento se ele travar (ex.: USB)."""
+        process = self.process
+        if process is not None and process.poll() is None:
+            process.terminate()
+            self.window.after(int(STOP_TIMEOUT * 1000),
+                              lambda: process.poll() is None and process.kill())
+
+    def watch_kinect(self):
+        """Acompanha o USB para avisar da ausência e reabrir quando o Kinect voltar."""
+        state = kinect_status()
+        if state != self.kinect:
+            previous, self.kinect = self.kinect, state
+            self.show_kinect_warning()
+            if state in KINECT_MESSAGES:
+                if self.process is not None and self.process.poll() is None:
+                    self.set_waiting(True)
+                if self.waiting_kinect:
+                    self.status.set(WAITING_KINECT)
+            elif state == "ok" and previous in KINECT_MESSAGES and not self.waiting_kinect:
+                self.status.set("Kinect detectado. Clique em Aplicar para abrir a projeção.")
+        if (self.waiting_kinect and not self.start_scheduled
+                and self.kinect not in KINECT_MESSAGES and not kinect_users(self.own_pids())):
+            self.start_scheduled = True
+            self.status.set("Kinect disponível. Abrindo a projeção…")
+            # O dispositivo precisa de alguns instantes após ser enumerado ou liberado.
+            self.window.after(2000, self.start_after_kinect)
+        self.window.after(1000, self.watch_kinect)
+
+    def start_after_kinect(self):
+        self.start_scheduled = False
+        if self.waiting_kinect and self.kinect not in KINECT_MESSAGES:
+            self.apply(automatic=True)
 
     def poll_preview(self):
         if not self.applying and self.process is not None and self.process.poll() is None:
@@ -425,7 +576,7 @@ class Panel:
         self.crop["direita"].set(4)
         self.status.set("Sugestão: 17% à esquerda e 4% à direita. Clique em Aplicar e refine por tentativa.")
 
-    def apply(self):
+    def apply(self, automatic=False):
         if self.applying:
             return
         try:
@@ -444,10 +595,15 @@ class Panel:
             cropped = any(crop.values())
             performance = self.performance.get()
             performance_args = visual_tools.performance_options(performance)
-            executable = STATE / "native/bin/SARndbox"
+            executable = Path(os.environ.get("SARNDBOX_BIN") or STATE / "native/bin/SARndbox")
+            if not CONFIG.is_dir():
+                raise ValueError(f"Não encontrei a configuração do SARndbox em {CONFIG}.\n\n"
+                                 "Defina SARNDBOX_DIR com a pasta da instalação do SARndbox-2.8 "
+                                 "(veja o README).")
             palette = make_palette((CONFIG / "HeightColorMap.cpt").read_text(), values)
             if not executable.is_file():
-                raise ValueError("Não encontrei o executável do SARndbox.")
+                raise ValueError(f"Não encontrei o executável do SARndbox em {executable}.\n\n"
+                                 "Compile a versão adaptada (veja o README) ou defina SARNDBOX_BIN.")
             STATE.mkdir(exist_ok=True)
             atomic_write(STATE / "HeightColorMap.cpt", palette)
             if self.scan_points:
@@ -458,6 +614,28 @@ class Panel:
         except (OSError, ValueError, tk.TclError) as error:
             messagebox.showerror("Confira os valores", str(error))
             return
+        if self.kinect in KINECT_MESSAGES:
+            self.set_waiting(True)
+            self.stop_process()
+            self.status.set(WAITING_KINECT)
+            return
+        users = kinect_users(self.own_pids())
+        if users:
+            names = ", ".join(sorted(set(users.values())))
+            if not automatic:
+                if not messagebox.askyesno("Kinect em uso", f"{names} está usando o Kinect.\n\n"
+                                           "Fechar e abrir a projeção?"):
+                    self.status.set(f"O Kinect está sendo usado por {names}. Feche-o e clique em Aplicar.")
+                    return
+                for pid in users:
+                    try:
+                        os.kill(pid, signal.SIGTERM)
+                    except OSError:
+                        pass
+            self.set_waiting(True)
+            self.status.set(f"Aguardando {names} liberar o Kinect… a projeção abre sozinha em seguida.")
+            return
+        self.set_waiting(False)
         command = [str(executable), "-s", "100", "-uhm",
                    str(STATE / "HeightColorMap.cpt"), "-er", str(values["fundo"]), str(values["topo"])]
         command += visual_tools.appearance_options(visual) + view_options
@@ -483,8 +661,7 @@ class Panel:
         self.applying = True
         self.apply_button.state(["disabled"])
         self.status.set("Abrindo a projeção com os novos valores…")
-        if self.process is not None and self.process.poll() is None:
-            self.process.terminate()
+        self.stop_process()
         self.window.after(100, lambda: self.start_when_stopped(command))
 
     def start_when_stopped(self, command):
@@ -531,7 +708,10 @@ class Panel:
                     details = (STATE / "sarndbox.log").read_text(errors="replace")
                 except OSError:
                     details = ""
-                self.status.set(explain_failure(details))
+                # Só espera se o USB confirmar a ausência; senão tentaria reabrir sem parar.
+                if kinect_missing(details) and self.kinect in KINECT_MESSAGES:
+                    self.set_waiting(True)
+                self.status.set(WAITING_KINECT if self.waiting_kinect else explain_failure(details))
             else:
                 self.status.set("Projeção fechada. Seus últimos ajustes ficaram salvos.")
         self.window.after(500, self.watch)
@@ -539,6 +719,10 @@ class Panel:
     def close(self):
         if self.process is not None and self.process.poll() is None:
             self.process.terminate()
+            try:
+                self.process.wait(STOP_TIMEOUT)
+            except subprocess.TimeoutExpired:
+                self.process.kill()
         if self.log:
             self.log.close()
         for timer in self.window.tk.call("after", "info"):

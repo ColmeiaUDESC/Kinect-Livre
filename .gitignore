@@ -1,0 +1,10 @@
+# Arquivos que o painel gera a cada uso. Arquivos já versionados não são afetados.
+__pycache__/
+Kinect-3.10/ajuste_altura/*.tmp
+Kinect-3.10/ajuste_altura/preview.ppm
+Kinect-3.10/ajuste_altura/preview.ppm.json
+Kinect-3.10/ajuste_altura/camera.ppm
+Kinect-3.10/ajuste_altura/sarndbox.log
+Kinect-3.10/ajuste_altura/ProjectorMatrix-rotacao.dat
+# Link opcional para a instalação local do SARndbox (veja o README).
+/SARndbox-2.8

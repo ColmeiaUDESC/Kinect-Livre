@@ -55,7 +55,7 @@ class AreaTests(unittest.TestCase):
             state = Path(directory)
             (state/'native/bin').mkdir(parents=True)
             (state/'native/bin/SARndbox').symlink_to(app.STATE/'native/bin/SARndbox')
-            with patch.object(app,'STATE',state),patch.object(app,'external_output',return_value='PROJECTOR'):
+            with patch.object(app,'STATE',state),patch.object(app,'external_output',return_value='PROJECTOR'),patch.object(app,'kinect_status',return_value='ok'),patch.object(app,'kinect_users',return_value={}):
                 root=tk.Tk();root.withdraw();panel=app.Panel(root)
                 commands=[]
                 panel.start_when_stopped=lambda cmd:commands.append(cmd)
